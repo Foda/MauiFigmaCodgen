@@ -1,3 +1,7 @@
+import { parseLayout, parsePadding } from "./Handlers/LayoutHandler";
+import { parseTextNode } from "./Handlers/TextHandler";
+import { parseFrameNode } from "./Handlers/FrameHandler";
+
 interface XamlResource {
   readonly id: string;
   readonly key: string;
@@ -49,10 +53,10 @@ figma.codegen.on("generate", (eventData) => {
 function toMaui(nodeObject: SceneNode, resources: Array<XamlResource>) {
   console.log(nodeObject);
   if (nodeObject.type === "FRAME" || nodeObject.type === "COMPONENT" || nodeObject.type === 'INSTANCE') {
-    return handleFrameNode(nodeObject as FrameNode, resources);
+    return parseFrameNode(nodeObject as FrameNode, resources);
   }
   else if (nodeObject.type === "TEXT") {
-    return handleTextNode(nodeObject, resources);
+    return parseTextNode(nodeObject, resources);
   }
   else if (nodeObject.type === "RECTANGLE") {
     return handleRectangleNode(nodeObject, resources);
@@ -108,64 +112,6 @@ function paintToXamlResource(fill: Paint) : XamlResource {
   return null;
 }
 
-function handleTextNode(nodeObject: TextNode, resources: Array<XamlResource>) {
-  let result = `<Label`;
-  result += `\n\tFontFamily="${(nodeObject.fontName as FontName).family}"`;
-  result += `\n\tFontSize="${String(nodeObject.fontSize)}"`;
-  
-  switch (nodeObject.textAlignHorizontal) {
-    case "LEFT":
-      result += `\n\tHorizontalTextAlignment="Start"`;
-      break;
-    case "CENTER":
-      result += `\n\tHorizontalTextAlignment="Center"`;
-      break;
-    case "RIGHT":
-      result += `\n\tHorizontalTextAlignment="End"`;
-      break;
-    case "JUSTIFIED":
-      result += `\n\tHorizontalTextAlignment="Start"`;
-      break;
-  }
-
-  switch (nodeObject.textAlignVertical) {
-    case "TOP":
-      result += `\n\tVerticalTextAlignment="Start"`;
-      break;
-    case "CENTER":
-      result += `\n\tVerticalTextAlignment="Center"`;
-      break;
-    case "BOTTOM":
-      result += `\n\tVerticalTextAlignment="End"`;
-      break;
-  }
-
-  if (nodeObject.characters !== null) {
-    result += `\n\tText="${nodeObject.characters}"`;
-  }
-
-  result += ` />`;
-  return result;
-}
-
-function handleFrameNode(nodeObject: FrameNode, resources: Array<XamlResource>) {
-  let result = `<Border`;
-
-  // Border specific properties
-  result += `\n\tStrokeShape="RoundRectangle ${nodeObject.topLeftRadius} ${nodeObject.topRightRadius} ${nodeObject.bottomRightRadius} ${nodeObject.bottomLeftRadius}"`;
-
-  result += parseFill(nodeObject, resources);
-  result += parseStrokes(nodeObject, resources);
-  if (nodeObject.opacity != 1) {
-    result += `\n\tOpacity="${nodeObject.opacity}"`;
-  }
-
-  result += parseLayout(nodeObject);
-
-  result += ` />`;
-  return result;
-}
-
 function handleRectangleNode(nodeObject: RectangleNode, resources: Array<XamlResource>) {
   let result = `<Rectangle `;
 
@@ -198,45 +144,6 @@ function handleRectangleNode(nodeObject: RectangleNode, resources: Array<XamlRes
 //   result += ` />`;
 //   return result;
 // };
-
-// VisualElement base properties
-function parseLayout(nodeObject: SceneNode) {
-  let result = "";
-
-  result += `\n\tWidthRequest="${nodeObject.width}"`;
-  result += `\n\tHeightRequest="${nodeObject.height}"`;
-
-  if (nodeObject.minWidth !== null) {
-    result += `\n\tMinimumWidthRequest="${nodeObject.minWidth}"`;
-  }
-  if (nodeObject.minHeight !== null) {
-    result += `\n\tMinimumHeightRequest="${nodeObject.minHeight}"`;
-  }
-  if (nodeObject.maxWidth !== null) {
-    result += `\n\tMaximumWidthRequest="${nodeObject.maxWidth}"`;
-  }
-  if (nodeObject.maxHeight !== null) {
-    result += `\n\tMaximumHeightRequest="${nodeObject.maxHeight}"`;
-  }
-
-  result += parsePadding(nodeObject as AutoLayoutMixin);
-
-  return result;
-}
-
-function parsePadding(nodeObject: AutoLayoutMixin) {
-  if (nodeObject.paddingBottom == undefined &&
-      nodeObject.paddingLeft == undefined &&
-      nodeObject.paddingRight == undefined &&
-      nodeObject.paddingTop == undefined) {
-      return "";
-  } else {
-    return `\n\tPadding="${nodeObject.paddingLeft == undefined ? 0 : nodeObject.paddingLeft},` +
-    `${nodeObject.paddingTop == undefined ? 0 : nodeObject.paddingTop},` +
-    `${nodeObject.paddingRight == undefined ? 0 : nodeObject.paddingRight},` +
-    `${nodeObject.paddingBottom == undefined ? 0 : nodeObject.paddingBottom}"`;
-  }
-}
 
 function parseStrokes(nodeObject: GeometryMixin, resources: Array<XamlResource>) {
   if (nodeObject.strokes !== null && nodeObject.strokes.length > 0) {
