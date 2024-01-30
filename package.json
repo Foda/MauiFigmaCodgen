@@ -4,7 +4,7 @@
   "description": "A plugin to generate MAUI XAML",
   "main": "code.js",
   "scripts": {
-    "build": "tsc -p tsconfig.json"
+    "build": "webpack"
   },
   "author": "Figma",
   "license": "MIT",
@@ -14,6 +14,13 @@
   "homepage": "https://github.com/figma/plugin-samples#readme",
   "devDependencies": {
     "@figma/plugin-typings": "^1.77.0",
-    "figma-api-stub": "0.0.48"
+    "figma-api-stub": "0.0.48",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.90.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "@figma-plugin/helpers": "^0.15.2",
+    "indent-string": "^5.0.0"
   }
 }

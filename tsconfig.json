@@ -3,8 +3,13 @@
     "target": "es6",
     "lib": ["es2021"],
     "typeRoots": [
-      "node_modules/@types",
-      "node_modules/@figma"
-    ]
-  }
+      "./node_modules/@types",
+      "./node_modules/@figma"
+    ],
+    "outDir": "./dist",
+    "jsx": "react",
+    "allowJs": true,
+    "moduleResolution": "node"
+  },
+  "include": ["src/**/*.ts"]
 }

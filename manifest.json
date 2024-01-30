@@ -8,5 +8,5 @@
   "codegenLanguages": [
     { "label": "MAUI", "value": "maui" }
   ],
-  "main": "code.js"
+  "main": "dist/code.js"
 }
