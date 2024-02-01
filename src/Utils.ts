@@ -1,6 +1,9 @@
+import { parseComponentSet } from "./Handlers/ComponentStyleSetHandler";
 import { parseFrameNode } from "./Handlers/FrameHandler";
 import { parseRectangleNode } from "./Handlers/RectangleHandler";
 import { parseTextNode } from "./Handlers/TextHandler";
+import { parseLinearGradientBrush } from "./Types/LinearGradientBrush";
+import { parseRadialGradientBrush } from "./Types/RadialGradientBrush";
 import { XamlNode } from "./Types/XamlNode";
 
 export function parseNode(nodeObject: SceneNode, resources: Array<XamlResource>) : XamlNode {
@@ -39,7 +42,7 @@ export function parseStrokes(nodeObject: GeometryMixin, xamlNode: XamlNode, reso
 }
 
 export function hasGradient(fills: ReadonlyArray<Paint>): boolean {
-  return fills.length >= 1 && fills.some(p => p.type === 'GRADIENT_LINEAR');
+  return fills.length > 0 && fills.some(p => p.type === 'GRADIENT_LINEAR' || p.type === 'GRADIENT_RADIAL');
 }
 
 export function parseFill(nodeObject: MinimalFillsMixin, xamlNode: XamlNode, resources: Array<XamlResource>, attribute: string): XamlNode {
@@ -71,4 +74,27 @@ export function findExistingSolidBrush(fills: ReadonlyArray<Paint>, resources: A
     return resources.find((brush) => brush.id == solidFill.boundVariables.color.id);
   }
   return null;
+}
+
+export function parseGradientProperty(fills: ReadonlyArray<Paint>): XamlNode {
+  if (fills && fills.length > 0) {
+    for (var f of fills) {
+      const fill = f as GradientPaint;
+      if (fill.type == 'GRADIENT_LINEAR') {
+        return parseLinearGradientBrush(fill);
+      } else if (fill.type == 'GRADIENT_RADIAL') {
+        return parseRadialGradientBrush(fill);
+      }
+    }
+  }
+}
+
+export function parseColorStop(stop: ColorStop): XamlNode {
+  var color = "#" + decimalToHex(stop.color.a) + decimalToHex(stop.color.r) + decimalToHex(stop.color.g) + decimalToHex(stop.color.b);
+
+  var xamlNode = new XamlNode('GradientStop');
+  xamlNode.addAttribute('Offset', `${stop.position}`);
+  xamlNode.addAttribute('Color', `${color}`);
+
+  return xamlNode;
 }

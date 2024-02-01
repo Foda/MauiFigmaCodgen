@@ -1,11 +1,13 @@
 import { parseColor, parseNode } from "./Utils";
 import { XamlSolidColorBrush } from "./Types/SolidColorBrush";
+import { parseComponentSet } from "./Handlers/ComponentStyleSetHandler";
 
 figma.codegen.on("generate", (eventData) => {
   const node: SceneNode = eventData.node;
   const xamlResources: Array<XamlResource> = parseBrushes(node as MinimalFillsMixin);
+  const mauiXaml = toMaui(node, xamlResources);
+  
   let resourceDict = '';
-
   xamlResources.forEach((resource) => {
     resourceDict += resource.toXAML();
   });
@@ -14,7 +16,7 @@ figma.codegen.on("generate", (eventData) => {
   [
     {
       title: `XAML`,
-      code: toMaui(node, xamlResources),
+      code: mauiXaml,
       language: "HTML",
     },
     {
@@ -28,9 +30,19 @@ figma.codegen.on("generate", (eventData) => {
 
 function toMaui(nodeObject: SceneNode, resources: Array<XamlResource>) {
   console.log(nodeObject);
-  var xamlNode = parseNode(nodeObject, resources);
-  if (xamlNode != null) {
-    return xamlNode.buildString();
+
+  if (nodeObject.type === "COMPONENT_SET") {
+    var styleNodes = parseComponentSet(nodeObject, resources);
+    var result = '';
+    for (var n of styleNodes) {
+      result += n.buildString() + "\n";
+    }
+    return result;
+  } else {
+    var xamlNode = parseNode(nodeObject, resources);
+    if (xamlNode != null) {
+      return xamlNode.buildString();
+    }
   }
   return '';
 }

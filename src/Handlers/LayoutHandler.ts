@@ -23,19 +23,24 @@ export const parseLayout = (nodeObject: SceneNode, xamlNode: XamlNode): XamlNode
 };
 
 export const parsePadding = (nodeObject: AutoLayoutMixin, xamlNode: XamlNode): XamlNode => {
+    var padding = paddingToString(nodeObject);
+    xamlNode.addAttribute('Padding', padding);
+    return xamlNode;
+};
+
+export const paddingToString = (nodeObject: AutoLayoutMixin): string => {
     if (nodeObject.paddingBottom == undefined &&
         nodeObject.paddingLeft == undefined &&
         nodeObject.paddingRight == undefined &&
         nodeObject.paddingTop == undefined) {
-        return xamlNode;
+        return "0";
     } else {
-        var padding = 
+        const padding =
             `${nodeObject.paddingLeft == undefined ? 0 : nodeObject.paddingLeft},` +
             `${nodeObject.paddingTop == undefined ? 0 : nodeObject.paddingTop},` +
             `${nodeObject.paddingRight == undefined ? 0 : nodeObject.paddingRight},` +
             `${nodeObject.paddingBottom == undefined ? 0 : nodeObject.paddingBottom}`;
 
-        xamlNode.addAttribute('Padding', padding);
-        return xamlNode;
+        return padding;
     }
 };

@@ -1,6 +1,5 @@
 import { parseLayout } from "./LayoutHandler";
-import { parseGradientProperty } from "../Types/LinearGradientBrush";
-import { parseFill, parseStrokes, hasGradient } from "../Utils";
+import { parseFill, parseStrokes, hasGradient, parseGradientProperty } from "../Utils";
 import { XamlNode } from "../Types/XamlNode";
 import { parseShadow } from "./ShadowHandler";
 
