@@ -28,8 +28,8 @@ export const parseLinearGradientBrush = (paint: GradientPaint): XamlNode => {
 
   // Use 1,1 for a normalized value
   var startEnd = extractLinearGradientParamsFromTransform(1, 1, paint.gradientTransform);
-  xamlNode.addAttribute('StartPoint', `${startEnd.start[0]}, ${startEnd.start[1]}`);
-  xamlNode.addAttribute('EndPoint', `${startEnd.end[0]}, ${startEnd.end[1]}`);
+  xamlNode.addAttribute('StartPoint', `${startEnd.start[0].toFixed(3)}, ${startEnd.start[1].toFixed(3)}`);
+  xamlNode.addAttribute('EndPoint', `${startEnd.end[0].toFixed(3)}, ${startEnd.end[1].toFixed(3)}`);
 
   return xamlNode;
 };

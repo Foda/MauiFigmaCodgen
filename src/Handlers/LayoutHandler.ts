@@ -1,8 +1,29 @@
 import { XamlNode } from "../Types/XamlNode";
 
 export const parseLayout = (nodeObject: SceneNode, xamlNode: XamlNode): XamlNode => {
-    xamlNode.addAttribute('WidthRequest', `${nodeObject.width}`);
-    xamlNode.addAttribute('HeightRequest', `${nodeObject.height}`);
+    var respectWidth = true;
+    var respectHeight = true;
+
+    const layoutNode = nodeObject as LayoutMixin;
+    if (layoutNode != null) {
+        if (layoutNode.layoutSizingHorizontal != 'FIXED') {
+            respectWidth = false;
+            xamlNode.addAttribute('HorizontalOptions', 'Fill');
+        }
+
+        if (layoutNode.layoutSizingVertical != 'FIXED') {
+            respectHeight = false;
+            xamlNode.addAttribute('VerticalOptions', 'Fill');
+        }
+    }
+
+    if (respectWidth) {
+        xamlNode.addAttribute('WidthRequest', `${nodeObject.width}`);
+    }
+
+    if (respectHeight) {
+        xamlNode.addAttribute('HeightRequest', `${nodeObject.height}`);
+    }
 
     if (nodeObject.minWidth !== null) {
         xamlNode.addAttribute('MinimumWidthRequest', `${nodeObject.minWidth}`);
@@ -16,8 +37,6 @@ export const parseLayout = (nodeObject: SceneNode, xamlNode: XamlNode): XamlNode
     if (nodeObject.maxHeight !== null) {
         xamlNode.addAttribute('MaximumHeightRequest', `${nodeObject.maxHeight}`);
     }
-
-    xamlNode = parsePadding(nodeObject as AutoLayoutMixin, xamlNode);
 
     return xamlNode;
 };

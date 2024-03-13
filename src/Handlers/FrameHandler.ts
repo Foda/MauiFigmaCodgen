@@ -1,4 +1,4 @@
-import { parseLayout } from "./LayoutHandler";
+import { parseLayout, parsePadding } from "./LayoutHandler";
 import { parseFill, parseStrokes, hasGradient, parseNode, parseGradientProperty } from "../Utils";
 import { XamlNode } from "../Types/XamlNode";
 import { parseShadow } from "./ShadowHandler";
@@ -67,6 +67,7 @@ export const buildBorderNode = (nodeObject: FrameNode, resources: Array<XamlReso
   }
 
   xamlNode = parseLayout(nodeObject, xamlNode);
+  xamlNode = parsePadding(nodeObject as AutoLayoutMixin, xamlNode);
 
   const fills = nodeObject.fills as ReadonlyArray<Paint>;
   if (hasGradient(fills)) {

@@ -3,7 +3,7 @@
   "id": "180001230000000",
   "api": "1.0.0",
   "editorType": ["dev"],
-  "capabilities": ["codegen"],
+  "capabilities": ["codegen", "vscode"],
   "permissions": [],
   "codegenLanguages": [
     { "label": "MAUI", "value": "maui" }

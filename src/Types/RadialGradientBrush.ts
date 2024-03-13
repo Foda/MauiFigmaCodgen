@@ -10,8 +10,8 @@ export const parseRadialGradientBrush = (paint: GradientPaint): XamlNode => {
 
   // Use 1,1 for a normalized value
   var gradientProps = extractRadialOrDiamondGradientParams(1, 1, paint.gradientTransform);
-  xamlNode.addAttribute('Center', `${gradientProps.center[0]}, ${gradientProps.center[1]}`);
-  xamlNode.addAttribute('Radius', `${gradientProps.radius[0]}`);
+  xamlNode.addAttribute('Center', `${gradientProps.center[0].toFixed(3)}, ${gradientProps.center[1].toFixed(3)}`);
+  xamlNode.addAttribute('Radius', `${gradientProps.radius[0].toFixed(3)}`);
 
   return xamlNode;
 };
